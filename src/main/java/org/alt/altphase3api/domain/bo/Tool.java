@@ -3,13 +3,15 @@ package org.alt.altphase3api.domain.bo;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.alt.altphase3api.domain.enums.Department;
 import org.alt.altphase3api.domain.enums.ToolStatus;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "tools")
 public class Tool {
@@ -38,6 +40,7 @@ public class Tool {
   private BigDecimal monthlyCost;
 
   @Column(name = "active_users_count", nullable = false)
+  @Builder.Default
   private Integer activeUsersCount = 0;
 
   @Enumerated(EnumType.STRING)
@@ -46,6 +49,7 @@ public class Tool {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
+  @Builder.Default
   private ToolStatus status = ToolStatus.active;
 
   @Column(name = "created_at")

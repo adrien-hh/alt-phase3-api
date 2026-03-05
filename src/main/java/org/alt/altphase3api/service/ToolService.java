@@ -1,45 +1,78 @@
 package org.alt.altphase3api.service;
 
+import java.util.List;
+import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
+import org.alt.altphase3api.dto.CreateToolRequest;
+import org.alt.altphase3api.dto.UpdateToolRequest;
 import org.alt.altphase3api.repository.ToolRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ToolService {
 
-    private final ToolRepository toolRepository;
+  private final ToolRepository toolRepository;
 
-    public ToolService(ToolRepository toolRepository) {
-        this.toolRepository = toolRepository;
+  public ToolService(ToolRepository toolRepository) {
+    this.toolRepository = toolRepository;
+  }
+
+  public List<Tool> getAllTools() {
+    return toolRepository.findAll();
+  }
+
+  public Tool getToolById(Integer id) {
+    return toolRepository.findById(id).orElseThrow(() -> new RuntimeException("Tool not found"));
+  }
+
+  public Tool createTool(CreateToolRequest request) {
+    Category category =
+        categoryRepository
+            .findById(request.categoryId())
+            .orElseThrow(() -> new Exception("Category not found"));
+    Tool tool = request.toTool(category);
+    return toolRepository.save(tool);
+  }
+
+  public Tool updateTool(Integer id, UpdateToolRequest request) {
+      Tool tool = toolRepository.findById(id)
+              .orElseThrow(() -> new Exception("Tool not found"));
+
+      applyUpdates(tool, request);
+
+      return toolRepository.save(tool);
+
+  }
+
+  private void applyUpdates(Tool tool, UpdateToolRequest request) {
+    if (request.name() != null) {
+      tool.setName(request.name());
+    }
+    if (request.description() != null) {
+      tool.setDescription(request.description());
+    }
+    if (request.vendor() != null) {
+      tool.setVendor(request.vendor());
+    }
+    if (request.websiteUrl() != null) {
+      tool.setWebsiteUrl(request.websiteUrl());
+    }
+    if (request.monthlyCost() != null) {
+      tool.setMonthlyCost(request.monthlyCost());
+    }
+    if (request.ownerDepartment() != null) {
+      tool.setOwnerDepartment(request.ownerDepartment());
+    }
+    if (request.status() != null) {
+      tool.setStatus(request.status());
     }
 
-    public List<Tool> getAllTools() {
-        return toolRepository.findAll();
+    if (request.categoryId() != null) {
+      Category category =
+          categoryRepository
+              .findById(request.categoryId())
+              .orElseThrow(() -> new Exception("Category not found"));
+      tool.setCategory(category);
     }
-
-    public Tool getToolById(Integer id) {
-        return toolRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tool not found"));
-    }
-
-    public Tool createTool(Tool tool) {
-        return toolRepository.save(tool);
-    }
-
-    public Tool updateTool(Integer id, Tool updatedTool) {
-        Tool tool = getToolById(id);
-
-        if (updatedTool.getDescription() != null)
-            tool.setDescription(updatedTool.getDescription());
-
-        if (updatedTool.getMonthlyCost() != null)
-            tool.setMonthlyCost(updatedTool.getMonthlyCost());
-
-        if (updatedTool.getStatus() != null)
-            tool.setStatus(updatedTool.getStatus());
-
-        return toolRepository.save(tool);
-    }
+  }
 }
