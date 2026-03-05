@@ -1,21 +1,22 @@
 package org.alt.altphase3api.service;
 
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.CreateToolRequest;
 import org.alt.altphase3api.dto.UpdateToolRequest;
+import org.alt.altphase3api.repository.CategoryRepository;
 import org.alt.altphase3api.repository.ToolRepository;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ToolService {
 
   private final ToolRepository toolRepository;
-
-  public ToolService(ToolRepository toolRepository) {
-    this.toolRepository = toolRepository;
-  }
+  private final CategoryRepository categoryRepository;
 
   public List<Tool> getAllTools() {
     return toolRepository.findAll();
