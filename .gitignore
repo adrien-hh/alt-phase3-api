@@ -39,3 +39,4 @@ out/
 /back_env/.env
 /.env
 /src/main/resources/application-dev.properties
+/init-copy.sql
