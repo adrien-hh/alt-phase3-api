@@ -7,62 +7,45 @@ import java.time.Instant;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
+import org.alt.altphase3api.domain.enums.Department;
+import org.alt.altphase3api.domain.enums.Role;
+import org.alt.altphase3api.domain.enums.UserStatus;
 import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
 @Entity
-@Table(
-    name = "users",
-    schema = "internal_tools",
-    indexes = {
-      @Index(name = "idx_users_department", columnList = "department"),
-      @Index(name = "idx_users_status", columnList = "status")
-    },
-    uniqueConstraints = {
-      @UniqueConstraint(
-          name = "email",
-          columnNames = {"email"})
-    })
+@Table(name = "users")
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
   private Integer id;
 
-  @Size(max = 100)
-  @NotNull
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 
-  @Size(max = 150)
-  @NotNull
-  @Column(name = "email", nullable = false, length = 150)
+  @Column(name = "email", nullable = false, length = 150, unique = true)
   private String email;
 
-  @NotNull
-  @Lob
+  @Enumerated(EnumType.STRING)
   @Column(name = "department", nullable = false)
-  private String department;
+  private Department department;
 
-  @ColumnDefault("'employee'")
-  @Lob
+  @Enumerated(EnumType.STRING)
   @Column(name = "role")
-  private String role;
+  private Role role = Role.employee;
 
-  @ColumnDefault("'active'")
-  @Lob
+  @Enumerated(EnumType.STRING)
   @Column(name = "status")
-  private String status;
+  private UserStatus status = UserStatus.active;
 
   @Column(name = "hire_date")
   private LocalDate hireDate;
 
-  @ColumnDefault("CURRENT_TIMESTAMP")
   @Column(name = "created_at")
   private Instant createdAt;
 
-  @ColumnDefault("CURRENT_TIMESTAMP")
   @Column(name = "updated_at")
   private Instant updatedAt;
 }
