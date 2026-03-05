@@ -1,12 +1,12 @@
 package org.alt.altphase3api.service;
 
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.CreateToolRequest;
 import org.alt.altphase3api.dto.UpdateToolRequest;
+import org.alt.altphase3api.exception.ResourceNotFoundException;
 import org.alt.altphase3api.repository.CategoryRepository;
 import org.alt.altphase3api.repository.ToolRepository;
 import org.springframework.stereotype.Service;
@@ -23,26 +23,23 @@ public class ToolService {
   }
 
   public Tool getToolById(Integer id) {
-    return toolRepository.findById(id).orElseThrow(() -> new RuntimeException("Tool not found"));
+    return toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
   }
 
   public Tool createTool(CreateToolRequest request) {
     Category category =
         categoryRepository
             .findById(request.categoryId())
-            .orElseThrow(() -> new Exception("Category not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Category", request.categoryId()));
     Tool tool = request.toTool(category);
     return toolRepository.save(tool);
   }
 
   public Tool updateTool(Integer id, UpdateToolRequest request) {
-      Tool tool = toolRepository.findById(id)
-              .orElseThrow(() -> new Exception("Tool not found"));
+    Tool tool = getToolById(id);
+    applyUpdates(tool, request);
 
-      applyUpdates(tool, request);
-
-      return toolRepository.save(tool);
-
+    return toolRepository.save(tool);
   }
 
   private void applyUpdates(Tool tool, UpdateToolRequest request) {
@@ -72,7 +69,7 @@ public class ToolService {
       Category category =
           categoryRepository
               .findById(request.categoryId())
-              .orElseThrow(() -> new Exception("Category not found"));
+              .orElseThrow(() -> new ResourceNotFoundException("Category", request.categoryId()));
       tool.setCategory(category);
     }
   }
