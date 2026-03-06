@@ -8,6 +8,10 @@ group = 'org.alt'
 version = '0.0.1-SNAPSHOT'
 description = 'alt-phase3-api'
 
+// Fixes for openapi vulnerability
+ext['jackson-bom.version'] = '3.1.0' // Jackson 3 (tools.jackson.*)
+ext['jackson-2-bom.version'] = '2.21.1' // Jackson 2 (com.fasterxml.*)
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
@@ -24,12 +28,18 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	dotenvVersion = "5.1.0"
+}
+
 dependencies {
-	implementation "me.paulschwarz:spring-dotenv:4.0.0"
+	implementation(platform("me.paulschwarz:spring-dotenv-bom:$dotenvVersion"))
+	developmentOnly("me.paulschwarz:springboot4-dotenv")
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
