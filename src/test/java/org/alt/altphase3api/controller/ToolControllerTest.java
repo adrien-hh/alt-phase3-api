@@ -33,7 +33,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(ToolController.class)
 @Import(GlobalExceptionHandler.class)
@@ -42,10 +41,7 @@ class ToolControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @Autowired private ObjectMapper objectMapper;
-
-  @MockitoBean
-  private ToolService toolService;
+  @MockitoBean private ToolService toolService;
 
   @Test
   @DisplayName("GET /api/tools returns 200 with paginated list")

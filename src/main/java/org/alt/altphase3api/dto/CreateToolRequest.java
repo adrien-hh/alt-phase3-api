@@ -2,6 +2,8 @@ package org.alt.altphase3api.dto;
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+
+import lombok.Builder;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.domain.enums.Department;
@@ -10,6 +12,7 @@ import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Builder
 public record CreateToolRequest(
     @NotBlank(message = "Name is required")
         @Size(min = 2, max = 100, message = "Name is required and must be {min}-{max} characters")
