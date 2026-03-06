@@ -29,7 +29,7 @@ public class AccessRequest {
   private String businessJustification;
 
   @Enumerated(EnumType.STRING)
-  @Column(name="status")
+  @Column(name = "status")
   private AccessRequestStatus status = AccessRequestStatus.pending;
 
   @Column(name = "requested_at")
