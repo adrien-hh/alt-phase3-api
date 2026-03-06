@@ -4,23 +4,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.domain.enums.Department;
 import org.alt.altphase3api.domain.enums.ToolStatus;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ToolResponse(
         Integer id,
         String name,
         String description,
         String vendor,
-        @JsonProperty("website_url") String websiteUrl,
+        String websiteUrl,
         String category,
-        @JsonProperty("monthly_cost") BigDecimal monthlyCost,
-        @JsonProperty("owner_department") Department ownerDepartment,
+        BigDecimal monthlyCost,
+        Department ownerDepartment,
         ToolStatus status,
-        @JsonProperty("active_users_count") Integer activeUserCount,
-        @JsonProperty("created_at") Instant createdAt,
-        @JsonProperty("updated_at") Instant updatedAt
+        Integer activeUsersCount,
+        Instant createdAt,
+        Instant updatedAt
 ) {
     public static ToolResponse from(Tool tool) {
         return new ToolResponse(

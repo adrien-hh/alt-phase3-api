@@ -3,6 +3,7 @@ package org.alt.altphase3api.controller;
 import jakarta.validation.Valid;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.CreateToolRequest;
+import org.alt.altphase3api.dto.ToolDetailResponse;
 import org.alt.altphase3api.dto.ToolResponse;
 import org.alt.altphase3api.dto.UpdateToolRequest;
 import org.alt.altphase3api.service.ToolService;
@@ -28,7 +29,7 @@ public class ToolController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tool> getTool(@PathVariable Integer id) {
+    public ResponseEntity<ToolDetailResponse> getTool(@PathVariable Integer id) {
         return ResponseEntity.ok(toolService.getToolById(id));
     }
 
