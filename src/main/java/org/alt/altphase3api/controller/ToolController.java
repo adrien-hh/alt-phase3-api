@@ -63,7 +63,8 @@ public class ToolController {
       @Parameter(description = "Page size", example = "20") @RequestParam(defaultValue = "20")
           int limit,
       @Parameter(
-              description = "Sort format: field,direction. Allowed fields: name, cost, date ; allowed directions : asc, desc",
+              description =
+                  "Sort format: field,direction. Allowed fields: name, cost, date ; allowed directions : asc, desc",
               example = "cost,desc")
           @RequestParam(required = false)
           String sort) {

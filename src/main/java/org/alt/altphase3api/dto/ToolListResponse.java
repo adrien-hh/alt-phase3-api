@@ -7,8 +7,4 @@ import tools.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record ToolListResponse(
-    List<ToolResponse> data,
-    long total,
-    long filtered,
-    Map<String, Object> filtersApplied
-) {}
+    List<ToolResponse> data, long total, long filtered, Map<String, Object> filtersApplied) {}

@@ -64,7 +64,8 @@ class ToolServiceTest {
 
     Page<Tool> page = new PageImpl<>(List.of(tool), PageRequest.of(0, 10), 20);
 
-    when(toolRepository.findAll(ArgumentMatchers.<Specification<Tool>>any(), any(Pageable.class))).thenReturn(page);
+    when(toolRepository.findAll(ArgumentMatchers.<Specification<Tool>>any(), any(Pageable.class)))
+        .thenReturn(page);
     when(toolRepository.count()).thenReturn(20L);
 
     ToolSearchCriteria criteria = new ToolSearchCriteria(null, null, null, null, null);

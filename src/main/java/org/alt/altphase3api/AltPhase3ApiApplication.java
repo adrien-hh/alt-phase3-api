@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AltPhase3ApiApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AltPhase3ApiApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(AltPhase3ApiApplication.class, args);
+  }
 }

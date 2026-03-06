@@ -5,8 +5,8 @@ import lombok.Getter;
 /**
  * Base class for business logic exceptions.
  *
- * <p>All custom business exceptions should extend this class to provide
- * consistent error handling with error codes for client-side processing.
+ * <p>All custom business exceptions should extend this class to provide consistent error handling
+ * with error codes for client-side processing.
  */
 @Getter
 public abstract class BusinessException extends RuntimeException {

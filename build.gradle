@@ -19,6 +19,15 @@ java {
 	}
 }
 
+spotless {
+	java {
+		googleJavaFormat()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+}
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
