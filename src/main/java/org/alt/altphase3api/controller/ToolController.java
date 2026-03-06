@@ -9,6 +9,7 @@ import org.alt.altphase3api.service.ToolService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
@@ -47,13 +48,13 @@ public class ToolController {
     return ResponseEntity.ok(toolService.getToolById(id));
   }
 
-  @PostMapping
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ToolResponse> createTool(@Valid @RequestBody CreateToolRequest request) {
     ToolResponse tool = toolService.createTool(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(tool);
   }
 
-  @PutMapping("/{id}")
+  @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ToolResponse> updateTool(
       @PathVariable Integer id, @Valid @RequestBody UpdateToolRequest request) {
     ToolResponse tool = toolService.updateTool(id, request);
