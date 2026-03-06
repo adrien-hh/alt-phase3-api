@@ -1,5 +1,6 @@
 package org.alt.altphase3api.exception;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -26,18 +27,22 @@ public class GlobalExceptionHandler {
     Map<String, String> details =
         ex.getBindingResult().getFieldErrors().stream()
             .collect(
-                Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage, (a, b) -> a));
+                Collectors.toMap(
+                        error -> toSnakeCase(error.getField()),
+                    FieldError::getDefaultMessage,
+                    (a, b) -> a,
+                    LinkedHashMap::new));
 
-    return ErrorResponse.builder()
-        .error("Validation failed")
-        .message("Invalid request body")
-        .details(details)
-        .build();
+    return ErrorResponse.builder().error("Validation failed").details(details).build();
   }
 
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleGeneric(Exception ex) {
     return ErrorResponse.builder().error("Internal server error").message(ex.getMessage()).build();
+  }
+
+  private String toSnakeCase(String fieldName) {
+    return fieldName.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
   }
 }

@@ -23,22 +23,19 @@ public class ToolService {
   private final CategoryRepository categoryRepository;
   private final UsageLogRepository usageLogRepository;
 
-  private final LocalDate USAGE_START_DATE = LocalDate.now().minusDays(1000);
+  private final LocalDate USAGE_START_DATE = LocalDate.now().minusDays(30);
 
   public List<Tool> getAllTools() {
     return toolRepository.findAll();
   }
 
   public ToolDetailResponse getToolById(Integer id) {
-    Tool tool = toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
-
-    System.out.println(USAGE_START_DATE);
+    Tool tool =
+        toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
 
     long totalSessions = usageLogRepository.countByToolIdAndSessionDateAfter(id, USAGE_START_DATE);
-    System.out.println(totalSessions);
 
     Double avgMinutes = usageLogRepository.findAverageUsageMinutes(id, USAGE_START_DATE);
-    System.out.println(avgMinutes);
 
     int avgSessionMinutes = avgMinutes == null ? 0 : (int) Math.round(avgMinutes);
 
