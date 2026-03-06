@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,12 +29,22 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getFieldErrors().stream()
             .collect(
                 Collectors.toMap(
-                        error -> toSnakeCase(error.getField()),
+                    error -> toSnakeCase(error.getField()),
                     FieldError::getDefaultMessage,
                     (a, b) -> a,
                     LinkedHashMap::new));
 
     return ErrorResponse.builder().error("Validation failed").details(details).build();
+  }
+
+  @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+  @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+  public ErrorResponse handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
+
+    return ErrorResponse.builder()
+        .error("Unsupported media type")
+        .message("Content-Type must be application/json")
+        .build();
   }
 
   @ExceptionHandler(Exception.class)
