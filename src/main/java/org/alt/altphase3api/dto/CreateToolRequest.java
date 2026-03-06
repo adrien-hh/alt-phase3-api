@@ -1,9 +1,6 @@
 package org.alt.altphase3api.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
@@ -18,7 +15,9 @@ public record CreateToolRequest(
     @NotBlank(message = "Vendor is required")
         @Size(min = 2, max = 100, message = "Vendor is required and must be {min}-{max} characters")
         String vendor,
-    @URL(message = "Must be a valid URL format") String websiteUrl,
+    @URL(message = "Must be a valid URL format")
+        @Pattern(regexp = "^(https?://).+", message = "Must be a valid URL format")
+        String websiteUrl,
     @NotNull(message = "Category ID is required") Integer categoryId,
     @NotNull(message = "Monthly cost is required")
         @PositiveOrZero(message = "Must be a positive number")
