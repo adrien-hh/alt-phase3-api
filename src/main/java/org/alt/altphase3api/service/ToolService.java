@@ -1,15 +1,18 @@
 package org.alt.altphase3api.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.CreateToolRequest;
+import org.alt.altphase3api.dto.ToolDetailResponse;
 import org.alt.altphase3api.dto.ToolResponse;
 import org.alt.altphase3api.dto.UpdateToolRequest;
 import org.alt.altphase3api.exception.ResourceNotFoundException;
 import org.alt.altphase3api.repository.CategoryRepository;
 import org.alt.altphase3api.repository.ToolRepository;
+import org.alt.altphase3api.repository.UsageLogRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,13 +21,28 @@ public class ToolService {
 
   private final ToolRepository toolRepository;
   private final CategoryRepository categoryRepository;
+  private final UsageLogRepository usageLogRepository;
+
+  private final LocalDate USAGE_START_DATE = LocalDate.now().minusDays(1000);
 
   public List<Tool> getAllTools() {
     return toolRepository.findAll();
   }
 
-  public Tool getToolById(Integer id) {
-    return toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
+  public ToolDetailResponse getToolById(Integer id) {
+    Tool tool = toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
+
+    System.out.println(USAGE_START_DATE);
+
+    long totalSessions = usageLogRepository.countByToolIdAndSessionDateAfter(id, USAGE_START_DATE);
+    System.out.println(totalSessions);
+
+    Double avgMinutes = usageLogRepository.findAverageUsageMinutes(id, USAGE_START_DATE);
+    System.out.println(avgMinutes);
+
+    int avgSessionMinutes = avgMinutes == null ? 0 : (int) Math.round(avgMinutes);
+
+    return ToolDetailResponse.from(tool, totalSessions, avgSessionMinutes);
   }
 
   public ToolResponse createTool(CreateToolRequest request) {
@@ -37,7 +55,8 @@ public class ToolService {
   }
 
   public ToolResponse updateTool(Integer id, UpdateToolRequest request) {
-    Tool tool = toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
+    Tool tool =
+        toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
     applyUpdates(tool, request);
 
     return ToolResponse.from(toolRepository.save(tool));
