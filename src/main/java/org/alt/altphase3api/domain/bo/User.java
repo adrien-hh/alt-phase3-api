@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDate;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 import org.alt.altphase3api.domain.enums.Department;
 import org.alt.altphase3api.domain.enums.Role;
 import org.alt.altphase3api.domain.enums.UserStatus;
@@ -14,8 +14,11 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +37,12 @@ public class User {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "role")
+  @Builder.Default
   private Role role = Role.employee;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status")
+  @Builder.Default
   private UserStatus status = UserStatus.active;
 
   @Column(name = "hire_date")
