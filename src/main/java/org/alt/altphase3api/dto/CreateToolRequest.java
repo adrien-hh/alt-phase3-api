@@ -6,7 +6,10 @@ import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.domain.enums.Department;
 import org.hibernate.validator.constraints.URL;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record CreateToolRequest(
     @NotBlank(message = "Name is required")
         @Size(min = 2, max = 100, message = "Name is required and must be {min}-{max} characters")
