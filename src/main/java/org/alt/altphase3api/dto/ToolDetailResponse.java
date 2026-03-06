@@ -1,5 +1,6 @@
 package org.alt.altphase3api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.Instant;
 import org.alt.altphase3api.domain.bo.Tool;
@@ -20,9 +21,11 @@ public record ToolDetailResponse(
         Department ownerDepartment,
         ToolStatus status,
         Integer activeUsersCount,
+        @Schema(example = "1250.00")
         BigDecimal totalMonthlyCost,
         Instant createdAt,
         Instant updatedAt,
+        @Schema(description = "Usage statistics for the last 30 days")
         UsageMetrics usageMetrics
         ) {
 
