@@ -3,6 +3,7 @@ package org.alt.altphase3api.exception;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -12,18 +13,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(ResourceNotFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ErrorResponse handleResourceNotFound(ResourceNotFoundException ex) {
-
+    log.warn("Ressource not found: {}", ex.getMessage());
     return ErrorResponse.builder().error(ex.getError()).message(ex.getMessage()).build();
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+    log.warn("Validation failed : {}", ex.getMessage());
 
     Map<String, String> details =
         ex.getBindingResult().getFieldErrors().stream()
@@ -50,6 +53,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleGeneric(Exception ex) {
+    log.error("Unexpected error", ex);
     return ErrorResponse.builder().error("Internal server error").message(ex.getMessage()).build();
   }
 

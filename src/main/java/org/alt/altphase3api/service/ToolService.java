@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.*;
@@ -20,6 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ToolService {
 
@@ -30,7 +31,11 @@ public class ToolService {
   private final LocalDate USAGE_START_DATE = LocalDate.now().minusDays(30);
 
   public ToolListResponse getTools(ToolSearchCriteria criteria, Pageable pageable) {
-
+    log.info(
+        "Listing tools with criteria={}, page={}, size={}",
+        criteria,
+        pageable.getPageNumber(),
+        pageable.getPageSize());
     Specification<Tool> spec = ToolSpecifications.withFilters(criteria);
 
     Page<Tool> page = toolRepository.findAll(spec, pageable);
@@ -38,11 +43,14 @@ public class ToolService {
     long total = toolRepository.count();
     long filtered = page.getTotalElements();
 
-    List<ToolResponse> data = page.getContent()
-            .stream()
-            .map(ToolResponse::from)
-            .toList();
+    List<ToolResponse> data = page.getContent().stream().map(ToolResponse::from).toList();
 
+    Map<String, Object> filtersApplied = findFilters(criteria);
+
+    return new ToolListResponse(data, total, filtered, filtersApplied);
+  }
+
+  private Map<String, Object> findFilters(ToolSearchCriteria criteria) {
     Map<String, Object> filtersApplied = new LinkedHashMap<>();
 
     if (criteria.department() != null) {
@@ -61,10 +69,11 @@ public class ToolService {
       filtersApplied.put("max_cost", criteria.maxCost());
     }
 
-    return new ToolListResponse(data, total, filtered, filtersApplied);
+    return filtersApplied;
   }
 
   public ToolDetailResponse getToolById(Integer id) {
+    log.info("Fetching tool id={}", id);
     Tool tool =
         toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
 
@@ -78,6 +87,8 @@ public class ToolService {
   }
 
   public ToolResponse createTool(CreateToolRequest request) {
+    log.info("Creating tool name={}, vendor={}", request.name(), request.vendor());
+
     Category category =
         categoryRepository
             .findById(request.categoryId())
@@ -87,6 +98,8 @@ public class ToolService {
   }
 
   public ToolResponse updateTool(Integer id, UpdateToolRequest request) {
+    log.info("Updating tool id={}", id);
+
     Tool tool =
         toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
     applyUpdates(tool, request);
