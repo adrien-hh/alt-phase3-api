@@ -10,8 +10,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 
-@NoArgsConstructor
-@AllArgsConstructor
 public final class ToolSpecifications {
 
     public static Specification<Tool> withFilters(ToolSearchCriteria c) {

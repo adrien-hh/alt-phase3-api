@@ -1,18 +1,22 @@
 package org.alt.altphase3api.service;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
-import org.alt.altphase3api.dto.CreateToolRequest;
-import org.alt.altphase3api.dto.ToolDetailResponse;
-import org.alt.altphase3api.dto.ToolResponse;
-import org.alt.altphase3api.dto.UpdateToolRequest;
+import org.alt.altphase3api.dto.*;
 import org.alt.altphase3api.exception.ResourceNotFoundException;
 import org.alt.altphase3api.repository.CategoryRepository;
 import org.alt.altphase3api.repository.ToolRepository;
 import org.alt.altphase3api.repository.UsageLogRepository;
+import org.alt.altphase3api.repository.spec.ToolSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,8 +29,39 @@ public class ToolService {
 
   private final LocalDate USAGE_START_DATE = LocalDate.now().minusDays(30);
 
-  public List<Tool> getAllTools() {
-    return toolRepository.findAll();
+  public ToolListResponse getTools(ToolSearchCriteria criteria, Pageable pageable) {
+
+    Specification<Tool> spec = ToolSpecifications.withFilters(criteria);
+
+    Page<Tool> page = toolRepository.findAll(spec, pageable);
+
+    long total = toolRepository.count();
+    long filtered = page.getTotalElements();
+
+    List<ToolResponse> data = page.getContent()
+            .stream()
+            .map(ToolResponse::from)
+            .toList();
+
+    Map<String, Object> filtersApplied = new LinkedHashMap<>();
+
+    if (criteria.department() != null) {
+      filtersApplied.put("department", criteria.department());
+    }
+    if (criteria.status() != null) {
+      filtersApplied.put("status", criteria.status());
+    }
+    if (criteria.category() != null && !criteria.category().isBlank()) {
+      filtersApplied.put("category", criteria.category());
+    }
+    if (criteria.minCost() != null) {
+      filtersApplied.put("min_cost", criteria.minCost());
+    }
+    if (criteria.maxCost() != null) {
+      filtersApplied.put("max_cost", criteria.maxCost());
+    }
+
+    return new ToolListResponse(data, total, filtered, filtersApplied);
   }
 
   public ToolDetailResponse getToolById(Integer id) {
