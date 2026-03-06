@@ -3,6 +3,7 @@ package org.alt.altphase3api.controller;
 import jakarta.validation.Valid;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.CreateToolRequest;
+import org.alt.altphase3api.dto.ToolResponse;
 import org.alt.altphase3api.dto.UpdateToolRequest;
 import org.alt.altphase3api.service.ToolService;
 import org.springframework.http.HttpStatus;
@@ -32,14 +33,14 @@ public class ToolController {
     }
 
     @PostMapping
-    public ResponseEntity<Tool> createTool(@Valid @RequestBody CreateToolRequest request) {
-        Tool tool = toolService.createTool(request);
+    public ResponseEntity<ToolResponse> createTool(@Valid @RequestBody CreateToolRequest request) {
+        ToolResponse tool = toolService.createTool(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(tool);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Tool> updateTool(@PathVariable Integer id, @Valid @RequestBody UpdateToolRequest request) {
-        Tool tool = toolService.updateTool(id, request);
+    public ResponseEntity<ToolResponse> updateTool(@PathVariable Integer id, @Valid @RequestBody UpdateToolRequest request) {
+        ToolResponse tool = toolService.updateTool(id, request);
         return ResponseEntity.ok(tool);
     }
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.alt.altphase3api.domain.bo.Category;
 import org.alt.altphase3api.domain.bo.Tool;
 import org.alt.altphase3api.dto.CreateToolRequest;
+import org.alt.altphase3api.dto.ToolResponse;
 import org.alt.altphase3api.dto.UpdateToolRequest;
 import org.alt.altphase3api.exception.ResourceNotFoundException;
 import org.alt.altphase3api.repository.CategoryRepository;
@@ -26,20 +27,20 @@ public class ToolService {
     return toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
   }
 
-  public Tool createTool(CreateToolRequest request) {
+  public ToolResponse createTool(CreateToolRequest request) {
     Category category =
         categoryRepository
             .findById(request.categoryId())
             .orElseThrow(() -> new ResourceNotFoundException("Category", request.categoryId()));
     Tool tool = request.toTool(category);
-    return toolRepository.save(tool);
+    return ToolResponse.from(toolRepository.save(tool));
   }
 
-  public Tool updateTool(Integer id, UpdateToolRequest request) {
-    Tool tool = getToolById(id);
+  public ToolResponse updateTool(Integer id, UpdateToolRequest request) {
+    Tool tool = toolRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Tool", id));
     applyUpdates(tool, request);
 
-    return toolRepository.save(tool);
+    return ToolResponse.from(toolRepository.save(tool));
   }
 
   private void applyUpdates(Tool tool, UpdateToolRequest request) {
